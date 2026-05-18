@@ -1,16 +1,5 @@
 # Tradelab.id — Responsive Trading Education Website
 
-Versi ini adalah revisi profesional/modern dari prototype sebelumnya.
-
-## Perubahan utama revisi ini
-
-- Logo Google dan Apple sudah diganti menjadi file SVG asli/representatif di folder `assets/`.
-- Ikon emoji pada navbar, course card, profile, games, dan settings diganti menjadi ikon SVG agar lebih profesional.
-- Tampilan diperhalus dengan glassmorphism, border halus, shadow modern, hover state, dan focus state.
-- Layout tetap responsif: mobile tampil portrait, desktop/laptop/tablet tampil lebih lebar.
-- Struktur tetap dipisah menjadi 3 file utama: `index.html`, `style.css`, dan `script.js`.
-- Masih disertakan template database MySQL/XAMPP pada `DATABASE_XAMPP_TEMPLATE.sql`.
-
 ## Cara menjalankan
 
 1. Ekstrak folder ZIP.
