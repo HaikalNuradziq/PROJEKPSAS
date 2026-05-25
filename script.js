@@ -1,10 +1,3 @@
-/* ==========================================================
-   Tradelab.id static frontend prototype
-   Bahasa: vanilla JavaScript agar mudah dipindah ke XAMPP.
-   Penyimpanan sementara: localStorage.
-   Untuk produksi, ganti localStorage dengan PHP + MySQL API.
-   ========================================================== */
-
 const STORAGE_USERS = "tradelab_users_v1";
 const STORAGE_SESSION = "tradelab_session_v1";
 const DEFAULT_BALANCE = 4250;
@@ -185,12 +178,13 @@ const COURSES = [
         title: "How To Identify Up & Down Trends",
         subtitle: "Higher highs, higher lows, lower highs, lower lows",
         body: `
-          <p>In technical analysis, it is important to identify up and down trends before making trading decisions.</p>
+          <p><strong>In technical analysis</strong>, it is important to identify up and down trends before making trading decisions.</p>
           <p>An uptrend, also known as a bull market, is a period when prices are generally moving upward. On a chart, it often appears as a series of higher highs and higher lows.</p>
           <p>A downtrend, also known as a bear market, is a period when prices are generally moving downward. On a chart, it often appears as a series of lower highs and lower lows.</p>
           <h3>Key Signals</h3>
           <ul><li>Look at the overall direction of price movement.</li><li>Observe the slope of the trend line.</li><li>Use support and resistance levels to confirm trend structure.</li></ul>
-          <p>In an uptrend, price often finds support and continues to rise. In a downtrend, price often finds resistance and continues to fall.</p>`
+          <p>In an uptrend, price often finds support and continues to rise. In a downtrend, price often finds resistance and continues to fall.</p>
+          <p>In conclusion, identifying up and down trends in technical analysis is crucial for making informed trading decisions. By looking at the overall direction of the price movement, the slope of the trend line, and support and resistance levels, you can determine whether an asset price is in an up trend or a down trend.</p>`
       },
       {
         title: "Support & Resistance",
