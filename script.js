@@ -8,6 +8,7 @@
 const STORAGE_USERS = "tradelab_users_v1";
 const STORAGE_SESSION = "tradelab_session_v1";
 const DEFAULT_BALANCE = 4250;
+const PRACTICE_DEMO_URL = "https://www.tradingview.com/chart/";
 const app = document.getElementById("app");
 
 const i18n = {
@@ -736,11 +737,14 @@ function renderPractice() {
     ${brandRow(user)}
     <h1 class="page-title">Practice</h1>
     <p class="page-subtitle">Practice reading trends, support, resistance, and pattern signals.</p>
-    <section class="hero-card green-hero">
-      <span class="pill">Simulator</span>
+    <section class="hero-card green-hero practice-demo-card">
+      <span class="pill">External Demo</span>
       <h2 class="hero-title">Market Replay Lab</h2>
-      <p class="hero-copy">Use this placeholder simulator to test entries and exits. A real chart engine can later be connected with TradingView, Binance API, or your own data.</p>
-      <button class="primary-btn" data-route="/quiz">Open Practice Quiz</button>
+      <p class="hero-copy">Open the demo chart on a separate website to practice reading market movement. This button only opens a new tab, so it does not change the existing HTML, CSS, JavaScript, or PHP flow in this project.</p>
+      <div class="practice-actions">
+        <a class="primary-btn external-demo-link" href="${PRACTICE_DEMO_URL}" target="_blank" rel="noopener noreferrer">Open Demo Website</a>
+        <button class="secondary-btn" data-route="/quiz">Open Practice Quiz</button>
+      </div>
     </section>
     <div class="desktop-wide-grid">
       <article class="content-card" style="padding:24px;border-radius:24px"><h3>Trend Reading</h3><p class="page-subtitle">Identify whether the market is forming higher highs, higher lows, lower highs, or lower lows.</p></article>
