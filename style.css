@@ -344,6 +344,19 @@ button:disabled {
   box-shadow: 0 14px 34px rgba(0,231,122,.25);
 }
 
+.practice-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.external-demo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .primary-btn.large-glow {
   min-height: 74px;
   margin-top: 6px;
