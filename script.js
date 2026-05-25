@@ -1,12 +1,6 @@
-/* ==========================================================
-   Tradelab.id static frontend prototype
-   Bahasa: vanilla JavaScript agar mudah dipindah ke XAMPP.
-   Penyimpanan sementara: localStorage.
-   Untuk produksi, ganti localStorage dengan PHP + MySQL API.
-   ========================================================== */
-
 const STORAGE_USERS = "tradelab_users_v1";
 const STORAGE_SESSION = "tradelab_session_v1";
+const STORAGE_LANGUAGE = "tradelab_language_v1";
 const DEFAULT_BALANCE = 4250;
 const PRACTICE_DEMO_URL = "https://www.tradingview.com/chart/";
 const app = document.getElementById("app");
@@ -694,8 +688,19 @@ function createRandomName() {
 }
 
 function getLang() {
+  const savedLanguage = localStorage.getItem(STORAGE_LANGUAGE);
+
+  if (savedLanguage === "id" || savedLanguage === "en") {
+    return savedLanguage;
+  }
+
   const user = currentUser();
-  return user?.lang || "en";
+
+  if (user?.lang === "id" || user?.lang === "en") {
+    return user.lang;
+  }
+
+  return "en";
 }
 
 function t(key, replacements = {}) {
@@ -745,7 +750,7 @@ function buildNewUser({ fullName, email, password }) {
     completedQuizzes: [],
     achievements: [],
     reminder: { enabled: false, time: "09:00", lastNotified: null },
-    lang: "en",
+    lang: getLang(),
     createdAt: new Date().toISOString()
   };
 }
@@ -1105,6 +1110,7 @@ function renderProfile() {
 
 function renderSettings() {
   const user = currentUser();
+  const activeLanguage = getLang();
   app.innerHTML = shell(`
     ${brandRow(user)}
     <h1 class="page-title">${t("settings")}</h1>
@@ -1121,7 +1127,7 @@ function renderSettings() {
       <article class="setting-card">
         <div class="setting-icon">${icon("language")}</div><div><h3>${t("language")}</h3><p>${t("languageDesc")}</p></div><span></span>
         <div class="settings-subpanel">
-          <select class="form-select" id="languageSelect"><option value="en" ${user.lang === "en" ? "selected" : ""}>English (US)</option><option value="id" ${user.lang === "id" ? "selected" : ""}>Bahasa Indonesia</option></select>
+          <select class="form-select" id="languageSelect"><option value="en" ${activeLanguage === "en" ? "selected" : ""}>English (US)</option><option value="id" ${activeLanguage === "id" ? "selected" : ""}>Bahasa Indonesia</option></select>
         </div>
       </article>
       <button class="setting-card" data-action="feedback"><div class="setting-icon">${icon("feedback")}</div><div><h3>${t("feedback")}</h3><p>${t("feedbackDesc")}</p></div><span class="chevron">›</span></button>
@@ -1237,9 +1243,16 @@ function saveName() {
 }
 
 function saveLanguage() {
-  const value = document.getElementById("languageSelect")?.value || "en";
-  updateCurrentUser(user => { user.lang = value; });
-  renderSettings();
+  const select = document.getElementById("languageSelect");
+  const value = select?.value === "id" ? "id" : "en";
+
+  localStorage.setItem(STORAGE_LANGUAGE, value);
+
+  updateCurrentUser(user => {
+    user.lang = value;
+  });
+
+  render();
 }
 
 async function toggleReminder() {
@@ -1322,7 +1335,9 @@ function handleSubmit(event) {
 }
 
 function handleChange(event) {
-  if (event.target.id === "languageSelect") saveLanguage();
+  if (event.target.id === "languageSelect") {
+    saveLanguage();
+  }
 }
 
 window.addEventListener("hashchange", render);
