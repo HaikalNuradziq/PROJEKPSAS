@@ -1,3 +1,10 @@
+/* ==========================================================
+   Tradelab.id static frontend prototype
+   Bahasa: vanilla JavaScript agar mudah dipindah ke XAMPP.
+   Penyimpanan sementara: localStorage.
+   Untuk produksi, ganti localStorage dengan PHP + MySQL API.
+   ========================================================== */
+
 const STORAGE_USERS = "tradelab_users_v1";
 const STORAGE_SESSION = "tradelab_session_v1";
 const STORAGE_LANGUAGE = "tradelab_language_v1";
@@ -31,9 +38,10 @@ const i18n = {
     "simulatedProfit": "Simulated Profit",
     "lessonsLearned": "Lessons Learned",
     "testsPassed": "Tests Passed",
-    "currentStreak": "Current Streak",
+    "currentStreak": "Learning Days",
     "recentBadges": "Recent Badges",
-    "daysStreak": "Days Streak",
+    "daysStreak": "Days",
+    "headerDaysLabel": "Days",
     "startJourneyTitle": "Start Learning Journey",
     "startJourneySubtitle": "Access trading lessons, practice, and progress tracking in one dashboard.",
     "email": "Email",
@@ -55,7 +63,7 @@ const i18n = {
     "signIn": "Sign In",
     "heroPill": "Beginner Path",
     "heroTitle": "Trading Basics",
-    "heroCopy": "Master the fundamentals of the global markets in 15 minutes.",
+    "heroCopy": "Build a clear foundation in technical analysis, candlestick reading, trend structure, and risk planning.",
     "knowledgeHub": "Knowledge Hub",
     "dailyTipTitle": "Daily Tip: Risk Management",
     "dailyTipText": "Never risk more than 1% of your total portfolio on a single trade. Preservation is key.",
@@ -117,14 +125,14 @@ const i18n = {
     "notificationBody": "Open your daily market brief and keep your streak alive.",
     "notificationAlert": "Tradelab.id Learning Reminder: open your daily lesson and keep your streak alive.",
     "scoreLabel": "Your score: {score}/{total}",
-    "quizCompleted": "Quiz completed. Your progress, balance, streak, and achievements have been updated.",
+    "quizCompleted": "Quiz completed. Your progress, learning days, and achievements have been updated.",
     "viewProfileProgress": "View Profile Progress",
     "backToGames": "Back to Games",
     "forgotPlaceholder": "Frontend placeholder: connect this button to your XAMPP/PHP password reset flow.",
     "feedbackPlaceholder": "Feedback form placeholder. Connect this to a database table or email endpoint."
   },
   "id": {
-    "documentTitle": "Tradelab.id — Trading Education",
+    "documentTitle": "Tradelab.id — Edukasi Trading",
     "learn": "Belajar",
     "games": "Permainan",
     "practice": "Latihan",
@@ -148,9 +156,10 @@ const i18n = {
     "simulatedProfit": "Profit Simulasi",
     "lessonsLearned": "Materi Dibaca",
     "testsPassed": "Tes Selesai",
-    "currentStreak": "Runtutan Hari",
+    "currentStreak": "Jumlah Hari",
     "recentBadges": "Lencana Terbaru",
-    "daysStreak": "Hari Berturut-turut",
+    "daysStreak": "Hari",
+    "headerDaysLabel": "Jumlah Hari",
     "startJourneyTitle": "Mulai Perjalanan Belajar",
     "startJourneySubtitle": "Akses materi, latihan, dan progres belajar trading dalam satu dashboard.",
     "email": "Email",
@@ -172,7 +181,7 @@ const i18n = {
     "signIn": "Masuk",
     "heroPill": "Jalur Pemula",
     "heroTitle": "Dasar Trading",
-    "heroCopy": "Pahami dasar pasar global dalam 15 menit.",
+    "heroCopy": "Bangun dasar analisis teknikal, candlestick, struktur tren, dan rencana risiko secara bertahap.",
     "knowledgeHub": "Pusat Pengetahuan",
     "dailyTipTitle": "Tips Harian: Manajemen Risiko",
     "dailyTipText": "Jangan mengambil risiko lebih dari 1% dari total portofolio dalam satu transaksi. Menjaga modal adalah kunci.",
@@ -234,7 +243,7 @@ const i18n = {
     "notificationBody": "Buka materi harian dan pertahankan runtutan belajarmu.",
     "notificationAlert": "Pengingat Belajar Tradelab.id: buka materi harian dan pertahankan runtutan belajarmu.",
     "scoreLabel": "Skor kamu: {score}/{total}",
-    "quizCompleted": "Kuis selesai. Progres, saldo, runtutan belajar, dan pencapaian sudah diperbarui.",
+    "quizCompleted": "Kuis selesai. Progres, jumlah hari belajar, dan pencapaian sudah diperbarui.",
     "viewProfileProgress": "Lihat Progres Profil",
     "backToGames": "Kembali ke Permainan",
     "forgotPlaceholder": "Placeholder frontend: hubungkan tombol ini ke alur reset kata sandi XAMPP/PHP.",
@@ -284,102 +293,115 @@ const COURSES_BY_LANG = {
     id: "trading-basics",
     icon: "book",
     title: "Trading Basics",
-    subtitle: "Learn how to trading",
+    subtitle: "Learn trading step by step",
     tag: "Beginner Path",
-    intro: "Master the fundamentals of the global markets in 15 minutes.",
-    hubTitle: "Knowledge Hub",
+    intro: "Build a practical foundation before reading charts, taking quizzes, or opening a market simulation.",
+    hubTitle: "Trading Basics",
     chapters: [
       {
         title: "What Is Technical Analysis",
-        subtitle: "Technical analysis basics",
+        subtitle: "Reading price, volume, and market behavior",
         body: `
-          <p><strong>Technical analysis</strong> is a method of evaluating securities by analyzing statistics generated by market activity, such as past prices and volume. It is primarily used to forecast the direction of prices through the study of past market data, primarily price and volume.</p>
-          <p>Technical analysts believe that market trends, as shown by charts and other technical indicators, can help estimate future activity. They use tools and techniques to analyze the market and identify trading opportunities.</p>
-          <p>One common tool in technical analysis is the use of technical indicators. Technical indicators are mathematical calculations based on market data, such as price and volume, that are used to forecast future price movements. Some common technical indicators include moving averages, relative strength index (RSI), and stochastic oscillator.</p>
-          <p>Technical analysts also use chart patterns to forecast price movements. These patterns, such as head and shoulders and triangles, are formed by the price action of a security and can be used to identify possible buying and selling opportunities.</p>`
+          <p class="lesson-lead"><strong>Technical analysis</strong> is the study of price movement, volume, and chart structure. Traders use it to understand market behavior, identify possible opportunities, and plan entries or exits with clearer rules.</p>
+          <div class="lesson-grid">
+            <div class="mini-card"><h3>What it reads</h3><p>Price, volume, trend direction, volatility, support, resistance, and repeated chart patterns.</p></div>
+            <div class="mini-card"><h3>Why traders use it</h3><p>It helps traders create a plan instead of making random decisions when the market moves fast.</p></div>
+          </div>
+          <h3>How It Works</h3>
+          <p>Technical analysis assumes that market price already reflects many visible and invisible factors. News, sentiment, demand, supply, and trader psychology often appear through price movement before every trader fully understands the reason.</p>
+          <p>Charts help traders see whether buyers or sellers currently control the market. A rising structure shows buying pressure. A falling structure shows selling pressure. A sideways structure shows balance or hesitation.</p>
+          <h3>Core Tools</h3>
+          <ul class="lesson-checklist"><li><strong>Trend reading</strong> to identify the main direction.</li><li><strong>Support and resistance</strong> to locate important zones.</li><li><strong>Candlestick analysis</strong> to read buyer and seller reactions.</li><li><strong>Indicators</strong> such as moving averages, RSI, MACD, and Bollinger Bands to support decisions.</li></ul>
+          <div class="note-box"><strong>Key idea:</strong> Technical analysis does not predict the future perfectly. It helps traders build scenarios, prepare risk control, and avoid emotional decisions.</div>`
       },
       {
         title: "Key Terms Used In Technical Analysis",
-        subtitle: "The vocabulary of price action",
+        subtitle: "Important vocabulary for reading charts",
         body: `
-          <p>Think of technical analysis as reading the "vibe" of the market. Here is the vocabulary you need to know:</p>
-          <h3>1. The Big Picture</h3>
-          <ul><li><strong>Trend:</strong> The general direction of price. It can move up, down, or sideways.</li><li><strong>Asset Price vs. Asset Value:</strong> Price is what you pay right now. Value is what the asset may actually be worth.</li></ul>
-          <h3>2. The Invisible Walls</h3>
-          <ul><li><strong>Support:</strong> A price level where buying pressure is often strong enough to stop price from falling further.</li><li><strong>Resistance:</strong> A price level where selling pressure is often strong enough to stop price from rising further.</li></ul>
-          <h3>3. The Gauges</h3>
-          <ul><li><strong>Moving Averages:</strong> They smooth daily zig-zags to show the average path.</li><li><strong>Indicators:</strong> RSI, MACD, and similar tools act like dashboard gauges that help estimate whether the market is moving too fast or losing momentum.</li></ul>
-          <h3>4. The Map Reading</h3>
-          <ul><li><strong>Chart Patterns:</strong> Recognizable shapes such as triangles or head and shoulders that appear on the price graph.</li></ul>
-          <p><strong>The takeaway:</strong> Technical analysis is not a crystal ball. It is closer to a weather report: it does not tell exactly what will happen, but it helps estimate likely scenarios from current market conditions.</p>`
+          <p class="lesson-lead">Before reading a chart, traders need to understand the basic terms. These terms make analysis easier, cleaner, and more consistent.</p>
+          <h3>1. Price Structure</h3>
+          <ul class="lesson-checklist"><li><strong>Trend:</strong> the general direction of price movement. It can move upward, downward, or sideways.</li><li><strong>Higher high:</strong> a new peak above the previous peak.</li><li><strong>Higher low:</strong> a pullback that stays above the previous low.</li><li><strong>Lower high:</strong> a rebound that fails below the previous peak.</li><li><strong>Lower low:</strong> a new low below the previous low.</li></ul>
+          <h3>2. Support and Resistance</h3>
+          <p><strong>Support</strong> is an area where buying pressure may appear. <strong>Resistance</strong> is an area where selling pressure may appear. These levels are better treated as zones, not thin lines.</p>
+          <h3>3. Candlestick Terms</h3>
+          <div class="lesson-grid"><div class="mini-card"><h3>Open</h3><p>The first traded price during one candle period.</p></div><div class="mini-card"><h3>Close</h3><p>The last traded price during one candle period.</p></div><div class="mini-card"><h3>High</h3><p>The highest price reached during the candle.</p></div><div class="mini-card"><h3>Low</h3><p>The lowest price reached during the candle.</p></div></div>
+          <h3>4. Indicators</h3>
+          <p>Indicators are calculations based on market data. Moving averages help smooth price movement. RSI helps read momentum. MACD helps read trend and momentum changes. Indicators work best as confirmation, not as the only reason to trade.</p>
+          <div class="note-box"><strong>Simple rule:</strong> good analysis combines structure, levels, candle reaction, volume, and risk plan.</div>`
       },
       {
         title: "The Limitations Of Technical Analysis",
-        subtitle: "Where chart reading can fail",
+        subtitle: "What chart reading cannot guarantee",
         body: `
-          <h3>1. The Rearview Mirror Problem</h3>
-          <p>Technical analysis often uses past data to guess where price may go next. This is similar to driving while looking mainly at the rearview mirror. It can miss sudden events such as policy shocks, earnings surprises, exchange problems, wars, or unexpected macroeconomic news.</p>
-          <h3>2. It Is an Art, Not a Precise Science</h3>
-          <p>Charts, numbers, and formulas are involved, but interpretation is subjective. Two traders can read the same chart and reach opposite conclusions.</p>
-          <ul><li>Trader A may see a breakout pattern.</li><li>Trader B may see a failed move and expect a reversal.</li></ul>
-          <h3>3. The Self-Fulfilling Prophecy</h3>
-          <p>Sometimes a level works because many traders believe it will work. If thousands of traders buy at a perceived support level, the combined behavior itself can push price upward.</p>
-          <h3>4. Technical vs. Fundamental Balance</h3>
-          <p>Technical analysis focuses on the "when" by looking at price movement and volume. Fundamental analysis focuses on the "what" by looking at business quality, earnings, industry conditions, and long-term value.</p>`
+          <p class="lesson-lead">Technical analysis is useful, but it has limits. Traders need to understand these limits so they do not treat charts as guaranteed signals.</p>
+          <h3>1. It Uses Historical Data</h3>
+          <p>Charts show what already happened. They can help traders estimate future scenarios, but they cannot fully predict sudden news, policy changes, server problems, geopolitical events, or unexpected earnings reports.</p>
+          <h3>2. Interpretation Can Differ</h3>
+          <p>Two traders can look at the same chart and make different conclusions. One trader may see a breakout. Another trader may see a false breakout. This happens because technical analysis involves judgement.</p>
+          <h3>3. False Signals Happen</h3>
+          <p>A pattern can look strong but fail quickly. Price can break resistance and fall back below it. Price can touch support and continue dropping. This is why confirmation and stop loss planning matter.</p>
+          <h3>4. Fundamentals Still Matter</h3>
+          <p>Technical analysis focuses on timing. Fundamental analysis focuses on value, business strength, macro conditions, and long-term quality. Strong traders understand both sides.</p>
+          <div class="lesson-grid"><div class="mini-card"><h3>Use charts for</h3><p>Timing, structure, entry zones, exit zones, and market reaction.</p></div><div class="mini-card"><h3>Use risk control for</h3><p>Position size, stop loss, maximum loss, and emotional discipline.</p></div></div>
+          <div class="note-box"><strong>Professional habit:</strong> never enter a trade only because one pattern appears. Always check context.</div>`
       },
       {
         title: "How Candlestick Patterns Work",
-        subtitle: "Open, high, low, close, wick, and range",
+        subtitle: "Open, high, low, close, body, and wick",
         diagram: "candlestick",
         body: `
-          <p>A candlestick chart is composed of individual candles. Traders use it to understand price action by identifying where the price opened, closed, reached its high, and reached its low during a specific period.</p>
-          <p>The period represented by each candle depends on the time frame chosen by the trader. A daily candle shows the open, close, high, and low for one day. A 15-minute candle shows the same components for a 15-minute period.</p>
-          <h3>Open Price</h3><p>The open price is the first price traded during the formation of a new candle.</p>
-          <h3>High Price</h3><p>The high price is the highest traded price during the candle period.</p>
-          <h3>Low Price</h3><p>The low price is the lowest traded price during the candle period.</p>
-          <h3>Close Price</h3><p>The close price is the last price traded during the candle period.</p>
-          <h3>The Wick</h3><p>The wick, also called the shadow, shows the extreme points reached beyond the candle body.</p>
-          <h3>Direction</h3><p>If the close is above the open, the candle is usually green. If the close is below the open, the candle is usually red.</p>
-          <h3>Range</h3><p>The range is calculated as the highest point minus the lowest point of the candle.</p>`
+          <p class="lesson-lead">A candlestick shows price movement in one selected time period. It helps traders see who controlled the market during that period: buyers, sellers, or neither side.</p>
+          <h3>Parts of a Candle</h3>
+          <div class="lesson-grid"><div class="mini-card"><h3>Body</h3><p>The distance between open and close. A large body shows stronger movement.</p></div><div class="mini-card"><h3>Wick</h3><p>The thin line above or below the body. It shows price rejection or exploration.</p></div><div class="mini-card"><h3>Bullish candle</h3><p>Close is above open. Buyers controlled the close.</p></div><div class="mini-card"><h3>Bearish candle</h3><p>Close is below open. Sellers controlled the close.</p></div></div>
+          <h3>How to Read Candle Reaction</h3>
+          <p>A long lower wick near support may show that sellers pushed price down, but buyers defended the area. A long upper wick near resistance may show that buyers pushed price up, but sellers rejected the move.</p>
+          <p>Candle patterns become stronger when they appear at important areas. A hammer in the middle of random movement is less useful than a hammer that appears near support after a downtrend.</p>
+          <h3>Common Pattern Logic</h3>
+          <ul class="lesson-checklist"><li><strong>Hammer:</strong> possible bullish rejection after selling pressure.</li><li><strong>Shooting star:</strong> possible bearish rejection after buying pressure.</li><li><strong>Engulfing:</strong> one side takes control strongly after the previous candle.</li><li><strong>Doji:</strong> hesitation because open and close are close together.</li></ul>
+          <div class="note-box"><strong>Important:</strong> a candle pattern is not enough. Always combine it with trend, support or resistance, volume, and risk plan.</div>`
       },
       {
         title: "Charting On Different Time Frames",
-        subtitle: "The zoom level of trading",
+        subtitle: "Choosing the right zoom level",
         body: `
-          <p>A time frame is the amount of time represented by one candle or data point on a chart.</p>
-          <h3>1. Short-Term: The Microscope</h3>
-          <ul><li>Charts: 1-minute, 5-minute, 15-minute.</li><li>Used by day traders who enter and exit within hours.</li><li>High energy and noisy. Small price movements matter.</li></ul>
-          <h3>2. Medium-Term: The Wide Angle</h3>
-          <ul><li>Charts: 1-hour and 4-hour.</li><li>Used by swing traders who hold trades for days or weeks.</li><li>Reduces the noise of very short-term charts.</li></ul>
-          <h3>3. Long-Term: The Satellite View</h3>
-          <ul><li>Charts: Daily, weekly, monthly.</li><li>Used by investors who hold for months or years.</li><li>Useful for major support and resistance zones.</li></ul>
-          <h3>The Multi-Time Frame Trick</h3>
-          <p>Many traders look at two or three time frames. They use a higher time frame to read the big trend and a lower time frame to choose the entry point.</p>`
+          <p class="lesson-lead">A time frame shows how much time each candle represents. The same asset can look bullish on one time frame and bearish on another. This is why context matters.</p>
+          <h3>Common Time Frames</h3>
+          <div class="lesson-grid"><div class="mini-card"><h3>Short-term</h3><p>1-minute, 5-minute, and 15-minute charts. These move fast and contain more noise.</p></div><div class="mini-card"><h3>Medium-term</h3><p>1-hour and 4-hour charts. These help swing traders read cleaner structure.</p></div><div class="mini-card"><h3>Long-term</h3><p>Daily, weekly, and monthly charts. These show major levels and broader direction.</p></div><div class="mini-card"><h3>Entry frame</h3><p>The smaller chart used to fine-tune entry after the main trend is known.</p></div></div>
+          <h3>Multi-Time-Frame Process</h3>
+          <ol class="lesson-checklist"><li>Use a higher time frame to read the main trend.</li><li>Mark support and resistance zones.</li><li>Move to a lower time frame to wait for candle confirmation.</li><li>Plan entry, stop loss, and target before taking action.</li></ol>
+          <p>For example, a trader may use the daily chart to see the main trend, the 4-hour chart to find a pullback zone, and the 15-minute chart to choose a cleaner entry.</p>
+          <div class="note-box"><strong>Clean habit:</strong> do not switch time frames only to find a reason that supports an emotional decision.</div>`
       },
       {
         title: "How To Identify Up & Down Trends",
-        subtitle: "Higher highs, higher lows, lower highs, lower lows",
+        subtitle: "Higher highs, higher lows, lower highs, and lower lows",
         body: `
-          <p>In technical analysis, it is important to identify up and down trends before making trading decisions.</p>
-          <p>An uptrend, also known as a bull market, is a period when prices are generally moving upward. On a chart, it often appears as a series of higher highs and higher lows.</p>
-          <p>A downtrend, also known as a bear market, is a period when prices are generally moving downward. On a chart, it often appears as a series of lower highs and lower lows.</p>
-          <h3>Key Signals</h3>
-          <ul><li>Look at the overall direction of price movement.</li><li>Observe the slope of the trend line.</li><li>Use support and resistance levels to confirm trend structure.</li></ul>
-          <p>In an uptrend, price often finds support and continues to rise. In a downtrend, price often finds resistance and continues to fall.</p>`
+          <p class="lesson-lead">Trend identification helps traders avoid fighting the dominant market direction. A clear trend gives structure to the trading plan.</p>
+          <h3>Uptrend</h3>
+          <p>An uptrend forms when price repeatedly creates <strong>higher highs</strong> and <strong>higher lows</strong>. This shows that buyers can push price higher after each pullback.</p>
+          <h3>Downtrend</h3>
+          <p>A downtrend forms when price repeatedly creates <strong>lower highs</strong> and <strong>lower lows</strong>. This shows that sellers can push price lower after each rebound.</p>
+          <h3>Sideways Market</h3>
+          <p>A sideways market happens when price moves between support and resistance without a clear direction. In this condition, breakout signals often need stronger confirmation.</p>
+          <div class="lesson-grid"><div class="mini-card"><h3>Trend line</h3><p>Connects important lows in an uptrend or important highs in a downtrend.</p></div><div class="mini-card"><h3>Moving average</h3><p>Shows whether price is generally above, below, or crossing the average path.</p></div><div class="mini-card"><h3>Break of structure</h3><p>Appears when price breaks a key high or low that previously shaped the trend.</p></div><div class="mini-card"><h3>Retest</h3><p>Happens when price returns to a broken level to test whether it holds.</p></div></div>
+          <div class="note-box"><strong>Decision rule:</strong> follow the trend when structure is clear. Reduce risk when structure becomes messy.</div>`
       },
       {
         title: "Support & Resistance",
-        subtitle: "The floor and ceiling of price",
+        subtitle: "Important zones where price may react",
         body: `
-          <p>Support and resistance are two fundamental concepts used to identify key levels in the price of a security or asset.</p>
+          <p class="lesson-lead">Support and resistance are price zones where the market has reacted before. Traders use them to plan entries, exits, and risk levels.</p>
           <h3>Support</h3>
-          <p>Support is a price level where buying pressure is strong enough to prevent price from falling further. If an asset has traded between $50 and $60 for weeks, and price repeatedly bounces from $55, that level may be considered support.</p>
+          <p>Support is an area where buying pressure may appear because price has previously bounced from that area. For example, if price often rebounds around the 50 to 55 zone, traders may watch that area as support.</p>
           <h3>Resistance</h3>
-          <p>Resistance is the opposite of support. It is a price level where selling pressure is strong enough to prevent price from rising further. If price repeatedly falls after reaching $65, that level may be considered resistance.</p>
-          <h3>How to Identify It</h3>
-          <ul><li>Use horizontal levels where price has reversed multiple times.</li><li>Use trend lines, moving averages, or Fibonacci levels as additional tools.</li><li>The more often price respects a level, the more important it becomes.</li></ul>
-          <h3>Using It in Trading</h3>
-          <p>Common strategies include range trading near support and resistance, or breakout trading when price moves beyond these levels with strong confirmation.</p>`
+          <p>Resistance is an area where selling pressure may appear because price has previously failed to move higher from that area. If price repeatedly rejects the 65 area, traders may mark it as resistance.</p>
+          <h3>How to Identify Strong Zones</h3>
+          <ul class="lesson-checklist"><li>Price reacted from the zone several times.</li><li>The zone appears on a higher time frame.</li><li>The reaction includes strong candles or rising volume.</li><li>The zone matches a trend line, moving average, or Fibonacci area.</li></ul>
+          <h3>Role Reversal</h3>
+          <p>When resistance breaks, it can become new support. When support breaks, it can become new resistance. This happens because traders often re-evaluate the area after price changes direction.</p>
+          <h3>Using It in a Trading Plan</h3>
+          <div class="lesson-grid"><div class="mini-card"><h3>Entry</h3><p>Wait for reaction near support, resistance, or a breakout retest.</p></div><div class="mini-card"><h3>Stop loss</h3><p>Place risk beyond the invalidation area, not randomly.</p></div><div class="mini-card"><h3>Target</h3><p>Use the next support or resistance zone as a logical target area.</p></div><div class="mini-card"><h3>Confirmation</h3><p>Look for candle reaction, volume, and trend alignment.</p></div></div>
+          <div class="note-box"><strong>Final reminder:</strong> support and resistance are zones of probability. They are not guaranteed walls.</div>`
       }
     ]
   },
@@ -460,103 +482,116 @@ const COURSES_BY_LANG = {
   {
     id: "trading-basics",
     icon: "book",
-    title: "Dasar Trading",
-    subtitle: "Pelajari dasar membaca pasar",
+    title: "Trading Basics",
+    subtitle: "Belajar trading secara bertahap",
     tag: "Jalur Pemula",
-    intro: "Pahami dasar pasar global dalam 15 menit.",
-    hubTitle: "Pusat Pengetahuan",
+    intro: "Bangun dasar yang praktis sebelum membaca grafik, mengerjakan kuis, atau membuka simulasi pasar.",
+    hubTitle: "Trading Basics",
     chapters: [
       {
         title: "Apa Itu Analisis Teknikal",
-        subtitle: "Dasar analisis teknikal",
+        subtitle: "Membaca harga, volume, dan perilaku pasar",
         body: `
-          <p><strong>Analisis teknikal</strong> adalah cara menilai pergerakan harga dengan membaca data pasar, terutama harga masa lalu dan volume. Trader memakai analisis ini untuk memperkirakan arah harga melalui pola, tren, dan indikator.</p>
-          <p>Analis teknikal percaya bahwa pergerakan harga di grafik dapat memberi petunjuk tentang kondisi pasar. Mereka memakai alat bantu seperti indikator, garis tren, serta pola grafik untuk mencari peluang beli dan jual.</p>
-          <p>Indikator teknikal adalah perhitungan berdasarkan data pasar. Contohnya adalah moving average, relative strength index (RSI), dan stochastic oscillator.</p>
-          <p>Trader juga memakai pola grafik seperti head and shoulders, triangle, support, dan resistance untuk membaca kemungkinan arah harga berikutnya.</p>`
+          <p class="lesson-lead"><strong>Analisis teknikal</strong> adalah cara membaca pergerakan harga, volume, dan struktur grafik. Trader menggunakannya untuk memahami perilaku pasar, mencari peluang, dan menyusun rencana masuk atau keluar secara lebih terarah.</p>
+          <div class="lesson-grid">
+            <div class="mini-card"><h3>Yang dibaca</h3><p>Harga, volume, arah tren, volatilitas, support, resistance, dan pola grafik yang berulang.</p></div>
+            <div class="mini-card"><h3>Alasan digunakan</h3><p>Analisis ini membantu trader membuat rencana, bukan mengambil keputusan secara acak saat pasar bergerak cepat.</p></div>
+          </div>
+          <h3>Cara Kerjanya</h3>
+          <p>Analisis teknikal berangkat dari gagasan bahwa harga pasar sudah mencerminkan banyak faktor. Berita, sentimen, permintaan, penawaran, dan psikologi trader sering terlihat melalui pergerakan harga.</p>
+          <p>Grafik membantu trader melihat siapa yang sedang lebih dominan. Struktur naik menunjukkan tekanan beli. Struktur turun menunjukkan tekanan jual. Struktur mendatar menunjukkan pasar sedang seimbang atau ragu.</p>
+          <h3>Alat Utama</h3>
+          <ul class="lesson-checklist"><li><strong>Pembacaan tren</strong> untuk mengetahui arah utama pasar.</li><li><strong>Support dan resistance</strong> untuk menemukan area penting.</li><li><strong>Candlestick</strong> untuk membaca reaksi pembeli dan penjual.</li><li><strong>Indikator</strong> seperti moving average, RSI, MACD, dan Bollinger Bands untuk membantu konfirmasi.</li></ul>
+          <div class="note-box"><strong>Inti materi:</strong> analisis teknikal tidak menjamin masa depan. Analisis ini membantu trader membuat skenario, mengatur risiko, dan mengurangi keputusan emosional.</div>`
       },
       {
         title: "Istilah Penting dalam Analisis Teknikal",
-        subtitle: "Kosakata dasar pergerakan harga",
+        subtitle: "Kosakata utama untuk membaca grafik",
         body: `
-          <p>Analisis teknikal membantu trader membaca kondisi pasar melalui bahasa grafik. Beberapa istilah berikut perlu dipahami terlebih dahulu.</p>
-          <h3>1. Gambaran Besar</h3>
-          <ul><li><strong>Tren:</strong> arah umum pergerakan harga. Harga dapat naik, turun, atau bergerak mendatar.</li><li><strong>Harga Aset dan Nilai Aset:</strong> harga adalah angka yang dibayar saat ini, sedangkan nilai adalah perkiraan kelayakan aset tersebut.</li></ul>
-          <h3>2. Area Batas Harga</h3>
-          <ul><li><strong>Support:</strong> area harga ketika tekanan beli sering muncul dan menahan harga agar tidak turun lebih jauh.</li><li><strong>Resistance:</strong> area harga ketika tekanan jual sering muncul dan menahan harga agar tidak naik lebih jauh.</li></ul>
-          <h3>3. Alat Ukur Pasar</h3>
-          <ul><li><strong>Moving Average:</strong> garis rata-rata harga yang membantu merapikan pergerakan harga harian.</li><li><strong>Indikator:</strong> RSI, MACD, dan alat sejenis yang membantu membaca momentum pasar.</li></ul>
-          <h3>4. Membaca Pola</h3>
-          <ul><li><strong>Pola Grafik:</strong> bentuk tertentu pada grafik, seperti triangle atau head and shoulders, yang dapat memberi sinyal peluang.</li></ul>
-          <p><strong>Intinya:</strong> analisis teknikal bukan alat yang menjamin masa depan. Analisis ini membantu trader menyusun skenario berdasarkan kondisi pasar saat ini.</p>`
+          <p class="lesson-lead">Sebelum membaca grafik, trader perlu memahami istilah dasar. Istilah ini membuat analisis lebih rapi, mudah dipahami, dan konsisten.</p>
+          <h3>1. Struktur Harga</h3>
+          <ul class="lesson-checklist"><li><strong>Tren:</strong> arah umum pergerakan harga. Tren bisa naik, turun, atau mendatar.</li><li><strong>Higher high:</strong> puncak baru yang lebih tinggi dari puncak sebelumnya.</li><li><strong>Higher low:</strong> koreksi yang tetap berada di atas low sebelumnya.</li><li><strong>Lower high:</strong> pantulan yang gagal melewati puncak sebelumnya.</li><li><strong>Lower low:</strong> titik rendah baru yang lebih rendah dari low sebelumnya.</li></ul>
+          <h3>2. Support dan Resistance</h3>
+          <p><strong>Support</strong> adalah area ketika tekanan beli berpotensi muncul. <strong>Resistance</strong> adalah area ketika tekanan jual berpotensi muncul. Keduanya lebih tepat dibaca sebagai zona, bukan garis tipis.</p>
+          <h3>3. Istilah Candlestick</h3>
+          <div class="lesson-grid"><div class="mini-card"><h3>Open</h3><p>Harga pertama pada satu periode candle.</p></div><div class="mini-card"><h3>Close</h3><p>Harga terakhir pada satu periode candle.</p></div><div class="mini-card"><h3>High</h3><p>Harga tertinggi yang dicapai dalam candle.</p></div><div class="mini-card"><h3>Low</h3><p>Harga terendah yang dicapai dalam candle.</p></div></div>
+          <h3>4. Indikator</h3>
+          <p>Indikator adalah perhitungan dari data pasar. Moving average membantu merapikan arah harga. RSI membantu membaca momentum. MACD membantu membaca perubahan tren dan momentum. Indikator paling baik digunakan sebagai konfirmasi, bukan satu-satunya alasan transaksi.</p>
+          <div class="note-box"><strong>Aturan sederhana:</strong> analisis yang baik menggabungkan struktur, level penting, reaksi candle, volume, dan rencana risiko.</div>`
       },
       {
         title: "Keterbatasan Analisis Teknikal",
-        subtitle: "Bagian yang perlu diwaspadai",
+        subtitle: "Hal yang tidak bisa dijamin oleh grafik",
         body: `
-          <h3>1. Bergantung pada Data Masa Lalu</h3>
-          <p>Analisis teknikal memakai data lama untuk memperkirakan arah berikutnya. Karena itu, analisis ini dapat gagal membaca peristiwa mendadak seperti kebijakan pemerintah, laporan keuangan, gangguan bursa, perang, atau berita makroekonomi yang tidak terduga.</p>
-          <h3>2. Membutuhkan Interpretasi</h3>
-          <p>Grafik, angka, dan rumus memang digunakan. Namun, pembacaannya tetap dapat berbeda antarseorang trader. Dua trader bisa melihat grafik yang sama, tetapi mengambil kesimpulan berbeda.</p>
-          <ul><li>Trader A dapat melihat sinyal breakout.</li><li>Trader B dapat melihat sinyal gagal naik dan menunggu pembalikan arah.</li></ul>
-          <h3>3. Efek Keyakinan Bersama</h3>
-          <p>Kadang sebuah level harga bekerja karena banyak trader mempercayainya. Jika banyak trader membeli pada area support, tindakan mereka dapat ikut mendorong harga naik.</p>
-          <h3>4. Perlu Seimbang dengan Fundamental</h3>
-          <p>Analisis teknikal membantu menjawab kapan harga menarik untuk diamati. Analisis fundamental membantu menjawab apa nilai dan kualitas aset tersebut.</p>`
+          <p class="lesson-lead">Analisis teknikal berguna, tetapi tetap memiliki batas. Trader perlu memahami batas ini agar tidak menganggap grafik sebagai sinyal yang pasti benar.</p>
+          <h3>1. Menggunakan Data Masa Lalu</h3>
+          <p>Grafik menunjukkan hal yang sudah terjadi. Grafik dapat membantu memperkirakan skenario, tetapi tidak mampu menjamin dampak berita mendadak, perubahan kebijakan, gangguan sistem, peristiwa geopolitik, atau laporan keuangan yang tidak terduga.</p>
+          <h3>2. Interpretasi Bisa Berbeda</h3>
+          <p>Dua trader dapat melihat grafik yang sama lalu mengambil kesimpulan berbeda. Satu trader melihat breakout. Trader lain melihat false breakout. Hal ini terjadi karena analisis teknikal tetap membutuhkan penilaian.</p>
+          <h3>3. Sinyal Palsu Bisa Muncul</h3>
+          <p>Pola dapat terlihat kuat, tetapi gagal dengan cepat. Harga bisa menembus resistance lalu turun kembali. Harga juga bisa menyentuh support tetapi tetap jatuh. Karena itu, konfirmasi dan stop loss tetap penting.</p>
+          <h3>4. Fundamental Tetap Penting</h3>
+          <p>Analisis teknikal membantu menentukan waktu. Analisis fundamental membantu menilai nilai, kualitas bisnis, kondisi makro, dan prospek jangka panjang. Trader yang lebih matang memahami keduanya.</p>
+          <div class="lesson-grid"><div class="mini-card"><h3>Grafik membantu</h3><p>Menentukan waktu, struktur, area masuk, area keluar, dan reaksi pasar.</p></div><div class="mini-card"><h3>Manajemen risiko membantu</h3><p>Mengatur ukuran posisi, stop loss, batas kerugian, dan disiplin emosi.</p></div></div>
+          <div class="note-box"><strong>Kebiasaan profesional:</strong> jangan masuk posisi hanya karena satu pola muncul. Selalu periksa konteks.</div>`
       },
       {
         title: "Cara Kerja Pola Candlestick",
-        subtitle: "Open, high, low, close, wick, dan range",
+        subtitle: "Open, high, low, close, body, dan wick",
         diagram: "candlestick",
         body: `
-          <p>Grafik candlestick terdiri dari beberapa candle. Trader memakainya untuk melihat harga pembukaan, penutupan, harga tertinggi, dan harga terendah dalam satu periode.</p>
-          <p>Periode setiap candle bergantung pada time frame yang dipilih. Candle harian menunjukkan data satu hari. Candle 15 menit menunjukkan data selama 15 menit.</p>
-          <h3>Harga Open</h3><p>Harga open adalah harga pertama yang terbentuk saat candle baru dimulai.</p>
-          <h3>Harga High</h3><p>Harga high adalah harga tertinggi yang tercapai selama periode candle.</p>
-          <h3>Harga Low</h3><p>Harga low adalah harga terendah yang tercapai selama periode candle.</p>
-          <h3>Harga Close</h3><p>Harga close adalah harga terakhir saat candle selesai terbentuk.</p>
-          <h3>Wick atau Shadow</h3><p>Wick menunjukkan titik ekstrem harga di luar badan candle.</p>
-          <h3>Arah Candle</h3><p>Jika close berada di atas open, candle biasanya berwarna hijau. Jika close berada di bawah open, candle biasanya berwarna merah.</p>
-          <h3>Range</h3><p>Range adalah selisih antara harga tertinggi dan harga terendah dalam satu candle.</p>`
+          <p class="lesson-lead">Candlestick menunjukkan pergerakan harga dalam satu periode waktu. Bentuknya membantu trader melihat siapa yang lebih dominan pada periode tersebut: pembeli, penjual, atau belum ada pihak yang jelas menang.</p>
+          <h3>Bagian Candle</h3>
+          <div class="lesson-grid"><div class="mini-card"><h3>Body</h3><p>Jarak antara open dan close. Body besar menunjukkan pergerakan yang lebih kuat.</p></div><div class="mini-card"><h3>Wick</h3><p>Garis tipis di atas atau bawah body. Wick menunjukkan penolakan atau percobaan harga.</p></div><div class="mini-card"><h3>Candle bullish</h3><p>Close berada di atas open. Pembeli lebih kuat saat penutupan.</p></div><div class="mini-card"><h3>Candle bearish</h3><p>Close berada di bawah open. Penjual lebih kuat saat penutupan.</p></div></div>
+          <h3>Cara Membaca Reaksi Candle</h3>
+          <p>Lower wick yang panjang di dekat support dapat menunjukkan bahwa penjual sempat menekan harga, tetapi pembeli berhasil mempertahankan area tersebut. Upper wick yang panjang di dekat resistance dapat menunjukkan bahwa pembeli sempat mendorong harga naik, tetapi penjual menolak kenaikan tersebut.</p>
+          <p>Pola candle menjadi lebih kuat ketika muncul di area penting. Hammer di tengah pergerakan acak kurang kuat dibanding hammer yang muncul di dekat support setelah tren turun.</p>
+          <h3>Logika Pola Umum</h3>
+          <ul class="lesson-checklist"><li><strong>Hammer:</strong> potensi penolakan bullish setelah tekanan jual.</li><li><strong>Shooting star:</strong> potensi penolakan bearish setelah tekanan beli.</li><li><strong>Engulfing:</strong> salah satu pihak mengambil kendali secara kuat dari candle sebelumnya.</li><li><strong>Doji:</strong> keraguan karena open dan close berada dekat.</li></ul>
+          <div class="note-box"><strong>Penting:</strong> pola candle tidak cukup berdiri sendiri. Gabungkan dengan tren, support atau resistance, volume, dan rencana risiko.</div>`
       },
       {
         title: "Membaca Grafik pada Berbagai Time Frame",
-        subtitle: "Tingkat zoom dalam trading",
+        subtitle: "Memilih tingkat zoom yang tepat",
         body: `
-          <p>Time frame adalah rentang waktu yang diwakili oleh satu candle atau satu titik data pada grafik.</p>
-          <h3>1. Jangka Pendek</h3>
-          <ul><li>Contoh grafik: 1 menit, 5 menit, dan 15 menit.</li><li>Umumnya dipakai day trader yang masuk dan keluar pasar dalam hitungan jam.</li><li>Pergerakannya cepat dan banyak noise.</li></ul>
-          <h3>2. Jangka Menengah</h3>
-          <ul><li>Contoh grafik: 1 jam dan 4 jam.</li><li>Umumnya dipakai swing trader yang menahan posisi beberapa hari atau minggu.</li><li>Noise lebih kecil dibanding time frame sangat pendek.</li></ul>
-          <h3>3. Jangka Panjang</h3>
-          <ul><li>Contoh grafik: harian, mingguan, dan bulanan.</li><li>Umumnya dipakai investor yang menahan posisi lebih lama.</li><li>Berguna untuk melihat area support dan resistance besar.</li></ul>
-          <h3>Trik Multi-Time Frame</h3>
-          <p>Banyak trader memakai dua atau tiga time frame. Time frame besar dipakai untuk membaca arah utama. Time frame kecil dipakai untuk memilih titik masuk.</p>`
+          <p class="lesson-lead">Time frame menunjukkan durasi yang diwakili oleh satu candle. Aset yang sama dapat terlihat bullish pada satu time frame dan bearish pada time frame lain. Karena itu, konteks sangat penting.</p>
+          <h3>Time Frame Umum</h3>
+          <div class="lesson-grid"><div class="mini-card"><h3>Jangka pendek</h3><p>Grafik 1 menit, 5 menit, dan 15 menit. Pergerakannya cepat dan lebih banyak noise.</p></div><div class="mini-card"><h3>Jangka menengah</h3><p>Grafik 1 jam dan 4 jam. Struktur lebih bersih untuk swing trader.</p></div><div class="mini-card"><h3>Jangka panjang</h3><p>Grafik harian, mingguan, dan bulanan. Cocok untuk melihat level besar dan arah utama.</p></div><div class="mini-card"><h3>Entry frame</h3><p>Time frame lebih kecil yang dipakai untuk merapikan titik masuk setelah tren utama diketahui.</p></div></div>
+          <h3>Proses Multi-Time-Frame</h3>
+          <ol class="lesson-checklist"><li>Gunakan time frame besar untuk membaca tren utama.</li><li>Tandai zona support dan resistance.</li><li>Pindah ke time frame lebih kecil untuk menunggu konfirmasi candle.</li><li>Rencanakan entry, stop loss, dan target sebelum mengambil aksi.</li></ol>
+          <p>Contohnya, trader dapat memakai grafik harian untuk melihat tren utama, grafik 4 jam untuk mencari area pullback, dan grafik 15 menit untuk memilih entry yang lebih rapi.</p>
+          <div class="note-box"><strong>Kebiasaan yang baik:</strong> jangan berpindah time frame hanya untuk mencari alasan yang membenarkan keputusan emosional.</div>`
       },
       {
         title: "Cara Mengenali Tren Naik dan Tren Turun",
         subtitle: "Higher high, higher low, lower high, dan lower low",
         body: `
-          <p>Dalam analisis teknikal, trader perlu mengenali tren sebelum mengambil keputusan.</p>
-          <p>Tren naik terjadi ketika harga secara umum bergerak ke atas. Pada grafik, tren ini sering terlihat melalui rangkaian higher high dan higher low.</p>
-          <p>Tren turun terjadi ketika harga secara umum bergerak ke bawah. Pada grafik, tren ini sering terlihat melalui rangkaian lower high dan lower low.</p>
-          <h3>Sinyal Utama</h3>
-          <ul><li>Perhatikan arah umum pergerakan harga.</li><li>Amati kemiringan garis tren.</li><li>Gunakan support dan resistance untuk memastikan struktur tren.</li></ul>
-          <p>Pada tren naik, harga sering memantul dari support dan melanjutkan kenaikan. Pada tren turun, harga sering tertahan di resistance dan melanjutkan penurunan.</p>`
+          <p class="lesson-lead">Mengenali tren membantu trader agar tidak melawan arah pasar yang dominan. Tren yang jelas memberi struktur pada rencana trading.</p>
+          <h3>Tren Naik</h3>
+          <p>Tren naik terbentuk ketika harga berulang kali membuat <strong>higher high</strong> dan <strong>higher low</strong>. Kondisi ini menunjukkan bahwa pembeli mampu mendorong harga lebih tinggi setelah setiap koreksi.</p>
+          <h3>Tren Turun</h3>
+          <p>Tren turun terbentuk ketika harga berulang kali membuat <strong>lower high</strong> dan <strong>lower low</strong>. Kondisi ini menunjukkan bahwa penjual mampu menekan harga lebih rendah setelah setiap pantulan.</p>
+          <h3>Pasar Sideways</h3>
+          <p>Pasar sideways terjadi ketika harga bergerak di antara support dan resistance tanpa arah yang jelas. Pada kondisi ini, sinyal breakout sering membutuhkan konfirmasi yang lebih kuat.</p>
+          <div class="lesson-grid"><div class="mini-card"><h3>Trend line</h3><p>Menghubungkan low penting pada tren naik atau high penting pada tren turun.</p></div><div class="mini-card"><h3>Moving average</h3><p>Menunjukkan apakah harga lebih sering berada di atas, bawah, atau memotong garis rata-rata.</p></div><div class="mini-card"><h3>Break of structure</h3><p>Muncul saat harga menembus high atau low penting yang membentuk tren.</p></div><div class="mini-card"><h3>Retest</h3><p>Terjadi ketika harga kembali ke level yang telah ditembus untuk menguji kekuatannya.</p></div></div>
+          <div class="note-box"><strong>Aturan keputusan:</strong> ikuti tren saat struktur jelas. Kurangi risiko saat struktur mulai berantakan.</div>`
       },
       {
         title: "Support dan Resistance",
-        subtitle: "Area bawah dan atas harga",
+        subtitle: "Zona penting tempat harga dapat bereaksi",
         body: `
-          <p>Support dan resistance adalah dua konsep dasar untuk membaca area penting pada harga aset.</p>
+          <p class="lesson-lead">Support dan resistance adalah zona harga yang sebelumnya pernah memicu reaksi pasar. Trader menggunakannya untuk menyusun entry, exit, dan batas risiko.</p>
           <h3>Support</h3>
-          <p>Support adalah area ketika tekanan beli cukup kuat untuk menahan harga agar tidak turun lebih jauh. Jika harga sering memantul dari area tertentu, area itu dapat dianggap sebagai support.</p>
+          <p>Support adalah area ketika tekanan beli berpotensi muncul karena harga sebelumnya sering memantul dari area tersebut. Contohnya, jika harga beberapa kali naik kembali dari zona 50 sampai 55, trader dapat mengamati zona itu sebagai support.</p>
           <h3>Resistance</h3>
-          <p>Resistance adalah kebalikan dari support. Area ini menunjukkan tempat tekanan jual cukup kuat untuk menahan harga agar tidak naik lebih jauh.</p>
-          <h3>Cara Mengenalinya</h3>
-          <ul><li>Gunakan level horizontal ketika harga beberapa kali berbalik arah.</li><li>Gunakan garis tren, moving average, atau Fibonacci sebagai alat tambahan.</li><li>Semakin sering harga menghormati sebuah level, semakin penting level tersebut.</li></ul>
-          <h3>Cara Memakainya</h3>
-          <p>Strategi umum adalah membeli dekat support, menjual dekat resistance, atau menunggu breakout yang didukung konfirmasi kuat.</p>`
+          <p>Resistance adalah area ketika tekanan jual berpotensi muncul karena harga sebelumnya sering gagal naik melewati area tersebut. Jika harga berulang kali tertolak di area 65, trader dapat menandainya sebagai resistance.</p>
+          <h3>Cara Mengenali Zona Kuat</h3>
+          <ul class="lesson-checklist"><li>Harga beberapa kali bereaksi dari zona yang sama.</li><li>Zona terlihat jelas pada time frame besar.</li><li>Reaksi harga disertai candle kuat atau volume meningkat.</li><li>Zona sesuai dengan trend line, moving average, atau area Fibonacci.</li></ul>
+          <h3>Role Reversal</h3>
+          <p>Saat resistance ditembus, area itu dapat berubah menjadi support baru. Saat support ditembus, area itu dapat berubah menjadi resistance baru. Kondisi ini terjadi karena trader sering menilai ulang area tersebut setelah arah harga berubah.</p>
+          <h3>Penggunaan dalam Rencana Trading</h3>
+          <div class="lesson-grid"><div class="mini-card"><h3>Entry</h3><p>Tunggu reaksi di dekat support, resistance, atau retest setelah breakout.</p></div><div class="mini-card"><h3>Stop loss</h3><p>Letakkan risiko di luar area invalidasi, bukan secara acak.</p></div><div class="mini-card"><h3>Target</h3><p>Gunakan support atau resistance berikutnya sebagai area target yang logis.</p></div><div class="mini-card"><h3>Konfirmasi</h3><p>Perhatikan reaksi candle, volume, dan kesesuaian dengan tren.</p></div></div>
+          <div class="note-box"><strong>Pengingat akhir:</strong> support dan resistance adalah zona peluang. Keduanya bukan dinding yang selalu menahan harga.</div>`
       }
     ]
   },
@@ -842,10 +877,11 @@ function brandRow(user) {
         <div class="avatar" aria-hidden="true">${brandAvatar()}</div>
         <div>
           <div class="brand-name">${escapeHtml(user.displayName || "Tradelab.id")}</div>
-          <div class="streak-small">${icon("flame", "inline-icon")} ${user.streak} ${t("daysStreak")}</div>
         </div>
       </div>
-      <div class="balance-pill">$${Number(user.balance).toLocaleString("id-ID", { minimumFractionDigits: 2 })}</div>
+      <div class="top-day-pill" aria-label="Streak: ${user.streak}">
+        <span class="top-day-number">${user.streak}</span><span class="fire-logo" aria-hidden="true">🔥</span>
+      </div>
     </header>`;
 }
 
@@ -989,13 +1025,25 @@ function renderCourse(courseId) {
   const course = courseById(courseId) || getCourses()[0];
   app.innerHTML = shell(`
     ${backBar("Tradelab.id")}
-    <h1 class="page-title">${course.hubTitle || course.title}</h1>
-    <p class="page-subtitle">${course.subtitle}</p>
-    <div class="chapter-list">
+    <section class="course-overview-card">
+      <span class="pill">${course.tag || t("heroPill")}</span>
+      <h1 class="page-title">${course.hubTitle || course.title}</h1>
+      <p class="page-subtitle">${course.intro || course.subtitle}</p>
+      <div class="overview-metrics">
+        <span>${course.chapters.length} ${t("chapter")}</span>
+        <span>${t("beginner")}</span>
+        <span>${t("knowledgeHub")}</span>
+      </div>
+    </section>
+    <div class="chapter-list modern-chapter-list">
       ${course.chapters.map((chapter, index) => `
         <button class="chapter-btn" data-route="/lesson/${course.id}/${index}">
-          ${t("chapterShort")} ${index + 1} : ${chapter.title}
-          <span class="chapter-meta">${chapter.subtitle}</span>
+          <span class="chapter-index">${String(index + 1).padStart(2, "0")}</span>
+          <span class="chapter-title-wrap">
+            <strong>${chapter.title}</strong>
+            <span class="chapter-meta">${chapter.subtitle}</span>
+          </span>
+          <span class="chapter-arrow">›</span>
         </button>`).join("")}
     </div>
   `, { noNav: true });
@@ -1009,9 +1057,12 @@ function renderLesson(courseId, chapterIndex) {
   const done = user.completedLessons.includes(key);
   app.innerHTML = shell(`
     ${backBar("Tradelab.id")}
-    <h1 class="page-title">${t("chapter")} ${Number(chapterIndex) + 1}</h1>
-    <p class="page-subtitle">${chapter.title}</p>
-    <article class="lesson-card">
+    <section class="lesson-hero-card">
+      <span class="lesson-kicker">${t("chapter")} ${Number(chapterIndex) + 1}</span>
+      <h1 class="page-title">${chapter.title}</h1>
+      <p class="page-subtitle">${chapter.subtitle}</p>
+    </section>
+    <article class="lesson-card modern-lesson-card">
       ${chapter.body}
       ${chapter.diagram === "candlestick" ? candlestickDiagram() : ""}
       <div class="lesson-actions">
@@ -1097,7 +1148,6 @@ function renderProfile() {
       <div class="stat-card"><div class="stat-icon">${icon("book")}</div><span class="stat-number">${user.completedLessons.length}</span><span class="stat-label">${t("lessonsLearned")}</span></div>
       <div class="stat-card"><div class="stat-icon">${icon("medal")}</div><span class="stat-number">${user.completedQuizzes.length}</span><span class="stat-label">${t("testsPassed")}</span></div>
       <div class="stat-card"><div class="stat-icon">${icon("flame")}</div><span class="stat-number">${user.streak} ${user.streak === 1 ? t("day") : t("days")}</span><span class="stat-label">${t("currentStreak")}</span></div>
-      <div class="stat-card" style="background:linear-gradient(140deg,#113f2b,#0e452f)"><div class="stat-icon">${icon("wallet")}</div><span class="stat-number" style="color:var(--green)">$1,240</span><span class="stat-label">${t("simulatedProfit")}</span></div>
     </div>
     <article class="content-card" style="margin-top:28px;padding:24px;border-radius:24px">
       <div class="section-head" style="margin:0 0 12px"><h2 class="section-title">${t("recentBadges")}</h2><button class="view-link">${t("viewAll")}</button></div>
