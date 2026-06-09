@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'config.php';
+header('Content-Type: application/json');
 
 if(!isset($_SESSION['user_id'])){
     echo json_encode([
@@ -10,10 +11,17 @@ if(!isset($_SESSION['user_id'])){
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = mysqli_real_escape_string($conn, $_SESSION['user_id']);
+$course_id = mysqli_real_escape_string($conn, $_POST['course_id'] ?? '');
+$chapter   = mysqli_real_escape_string($conn, $_POST['chapter'] ?? '');
 
-$course_id = $_POST['course_id'];
-$chapter   = $_POST['chapter'];
+if (!$course_id || !$chapter) {
+    echo json_encode([
+        "status" => "error",
+        "message" => "Data kursus tidak lengkap"
+    ]);
+    exit;
+}
 
 $query = "INSERT INTO progress(user_id, course_id, chapter_title, completed)
 VALUES('$user_id','$course_id','$chapter',1)";
@@ -24,7 +32,8 @@ if(mysqli_query($conn, $query)){
     ]);
 }else{
     echo json_encode([
-        "status" => "error"
+        "status" => "error",
+        "message" => mysqli_error($conn)
     ]);
 }
 ?>

@@ -1335,9 +1335,24 @@ function checkReminder() {
   updateCurrentUser(item => { item.reminder.lastNotified = currentDate; });
 }
 
-function submitQuiz(event) {
+async function saveProgress(courseId, chapter) {
+  try {
+    await fetch("save_progress.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ course_id: courseId, chapter })
+    });
+  } catch (error) {
+    console.warn("saveProgress failed:", error);
+  }
+}
+
+async function submitQuiz(event) {
   event.preventDefault();
-  const form = new FormData(event.currentTarget);
+  const quizForm = event.target.closest("#quizForm");
+  if (!quizForm) return;
+
+  const form = new FormData(quizForm);
   const quizQuestions = getQuizQuestions();
   let score = 0;
   quizQuestions.forEach((item, index) => {
@@ -1346,10 +1361,12 @@ function submitQuiz(event) {
   updateCurrentUser(user => {
     if (!user.completedQuizzes.includes("main-quiz")) user.completedQuizzes.push("main-quiz");
     user.balance += score * 25;
+    user.lastQuizScore = score;
     unlockAchievements(user);
   });
   markLearningActivity();
-  event.currentTarget.innerHTML = `
+  await saveProgress("quiz", "main-quiz");
+  quizForm.innerHTML = `
     <div class="quiz-result"><strong>${t("scoreLabel", { score, total: quizQuestions.length })}</strong><br/>${t("quizCompleted")}</div>
     <button class="primary-btn" type="button" data-route="/profile">${t("viewProfileProgress")}</button>
     <button class="secondary-btn" type="button" data-route="/games" style="margin-top:12px;width:100%">${t("backToGames")}</button>`;
